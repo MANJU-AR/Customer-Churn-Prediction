@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Customer Churn Predictor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    };
+    function toggleTheme() {
+      document.documentElement.classList.toggle("dark");
+    }
+  </script>
+</head>
+<body class="bg-gradient-to-br from-gray-100 to-blue-100 dark:from-gray-900 dark:to-blue-950 min-h-screen text-gray-900 dark:text-white transition-all">
+
+  <div class="max-w-6xl mx-auto px-6 py-10">
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-4xl font-bold text-blue-700 dark:text-blue-400">🚀 Customer Churn Predictor</h1>
+      <button onclick="toggleTheme()" class="px-4 py-2 bg-gray-200 dark:bg-gray-800 rounded-lg shadow text-sm hover:scale-105 transition">Toggle Theme</button>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-10">
+      <form method="POST" action="/predict">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {% for col in feature_columns %}
+          <div class="bg-gray-100 dark:bg-gray-700 rounded-xl p-4 shadow hover:shadow-md transition">
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1">
+              {{ col.replace("_", " ").title() }}
+            </label>
+
+            {% if col in categorical_options %}
+              <select name="{{ col }}" required
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-blue-400 outline-none">
+                {% for option in categorical_options[col] %}
+                  <option value="{{ option }}">{{ option }}</option>
+                {% endfor %}
+              </select>
+            {% else %}
+              <input type="text" name="{{ col }}" required
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-blue-400 outline-none"
+                placeholder="Enter {{ col }}">
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="mt-8 text-center">
+          <button type="submit"
+            class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-lg shadow-lg transition-all">
+            Predict Churn
+          </button>
+        </div>
+      </form>
+
+      {% if prediction_text %}
+      <div class="mt-8 p-6 bg-blue-100 dark:bg-blue-900 border border-blue-300 dark:border-blue-700 rounded-xl text-center text-xl font-semibold text-blue-800 dark:text-blue-200 shadow">
+        {{ prediction_text }}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>
